@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { MatButton } from "@angular/material/button";
-import { MatDialog } from "@angular/material/dialog";
-import { AddQuestionComponent } from "../shared/add-question/add-question.component";
+import { ModalService } from "../services/modal/modal.service";
 
 @Component({
   selector: "angular-avnon-home",
@@ -12,11 +11,9 @@ import { AddQuestionComponent } from "../shared/add-question/add-question.compon
   styleUrl: "./home.component.css",
 })
 export class HomeComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private modalService: ModalService) {}
 
   addQuestionModal(): void {
-    this.dialog.open(AddQuestionComponent, {
-      width: "80%",
-    });
+    this.modalService.addQuestionModal();
   }
 }
