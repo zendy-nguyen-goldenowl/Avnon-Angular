@@ -1,0 +1,43 @@
+.question-form-container {
+  width: 80%;
+  margin: 0 auto;
+  padding-bottom: 56px;
+}
+
+.form-container {
+  padding: 20px;
+  background-color: #f7f7f7;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+}
+
+.answer-options {
+  margin-top: 20px;
+}
+
+.answer-option {
+  display: flex;
+  flex-direction: row;
+}
+
+.option-count {
+  text-align: end;
+  font-style: italic;
+}
+
+.add-answer-button {
+  margin-top: 10px;
+}
+
+.submit-button {
+  margin-top: 20px;
+}

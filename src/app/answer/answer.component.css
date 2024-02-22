@@ -1,0 +1,16 @@
+.form-answer {
+  width: 100%;
+}
+
+.answer-content {
+  margin: 56px;
+}
+
+.answer-list {
+  margin-bottom: 24px;
+}
+
+.answer {
+  font-weight: bold;
+  margin-bottom: 10px;
+}

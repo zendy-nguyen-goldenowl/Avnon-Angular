@@ -1,0 +1,28 @@
+<div class="form-answer">
+  <div class="answer-content">
+    <ul>
+      <li *ngFor="let answer of answers$ | async; let i =  index">
+        <div class="answer-list">
+          <div class="answer">
+            {{ i + 1 }}. {{ answer.question }}
+          </div>
+          <div *ngIf="answer.type === 'checkbox'">
+            <ul>
+              <ng-container *ngFor="let option of answer.checkboxAnswer">
+                <li>{{ option }}</li>
+              </ng-container>
+            </ul>
+          </div>
+          <div *ngIf="answer.type === 'paragraph'">
+            <p>{{ answer.paragraphAnswer }}</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div>
+      <button mat-raised-button color="primary" (click)="backToFormBuilder()">
+        Back to Form Builder >
+      </button>
+    </div>
+  </div>
+</div>

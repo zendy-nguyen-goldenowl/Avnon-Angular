@@ -1,0 +1,113 @@
+<div class="question-form-container">
+  <h2>Add a New Questions</h2>
+
+  <form class="form-container">
+    <!-- Question -->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Type your question here</mat-label>
+      <input
+        matInput
+        class="input-field"
+        name="questionSignal"
+        #questionControl="ngModel"
+        [ngModel]="questionSignal()"
+        (ngModelChange)="questionSignal.set($event)"
+        placeholder="Please enter question"
+        required
+      />
+      <mat-error *ngIf="questionControl.hasError('required')">
+        This field is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Answer Type Select -->
+    <mat-form-field appearance="fill" class="form-field">
+      <mat-label>Answer Type</mat-label>
+      <mat-select
+        name="answerTypeSignal"
+        #answerTypeControl="ngModel"
+        [ngModel]="answerTypeSignal()"
+        (ngModelChange)="answerTypeSignal.set($event)"
+        placeholder="Please select answer type"
+        required
+      >
+        <mat-option
+          *ngFor="let answerType of answerTypes"
+          [value]="answerType.value"
+        >
+          {{ answerType.title }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="answerTypeControl.hasError('required')">
+        This field is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Answer Option -->
+    <div *ngIf="answerTypeSignal() === 'checkbox'">
+      <div class="option-count">
+        There are {{ answerOptionsCountSignal() }} option{{
+        answerOptionsCountSignal() !== 1 ? 's' : '' }} answer created
+      </div>
+      <div class="answer-options">
+        <div *ngFor="let option of answerOptionsSignal(); let i = index">
+          <div class="answer-option">
+            <mat-form-field appearance="fill" class="form-field">
+              <mat-label>Answer {{ i + 1 }}</mat-label>
+              <input
+                matInput
+                class="input-field"
+                [value]="option"
+                (change)="updateAnswerOption($event, i)"
+                placeholder="Please enter answer"
+                required
+              />
+            </mat-form-field>
+            <button
+              mat-button
+              (click)="removeAnswerOption(i)"
+              class="remove-option-button"
+            >
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button mat-button (click)="addAnswerOption()" class="add-answer-button">
+        + Add Another Answer
+      </button>
+
+      <div>
+        <mat-checkbox
+          name="customAnswer"
+          #customAnswerControl="ngModel"
+          [ngModel]="customAnswerSignal()"
+          (ngModelChange)="customAnswerSignal.set($event)"
+        >
+          Allow user to specify their own answer
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div>
+      <mat-checkbox
+        name="require"
+        #requireControl="ngModel"
+        [ngModel]="requireSignal()"
+        (ngModelChange)="requireSignal.set($event)"
+      >
+        This field is required
+      </mat-checkbox>
+    </div>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="submit-button"
+      (click)="submitForm()"
+    >
+      Submit
+    </button>
+  </form>
+</div>

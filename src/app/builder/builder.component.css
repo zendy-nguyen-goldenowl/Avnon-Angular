@@ -1,0 +1,29 @@
+.form-builder {
+  width: 100%;
+}
+
+.builder-content {
+  margin: 56px;
+}
+
+.question-list {
+  margin-bottom: 24px;
+}
+
+.question {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  width: 100%;
+}
+
+.review-answer {
+  text-align: end;
+}
