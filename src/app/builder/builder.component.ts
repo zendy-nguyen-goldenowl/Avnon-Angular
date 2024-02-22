@@ -6,7 +6,10 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatInputModule } from "@angular/material/input";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
-import { QuestionFormData } from "../interfaces/question-form-data.interface";
+import {
+  AnswerData,
+  QuestionFormData,
+} from "../interfaces/question-form-data.interface";
 import { FormService } from "../services/form/form.service";
 import { ModalService } from "../services/modal/modal.service";
 
@@ -40,6 +43,7 @@ export class BuilderComponent {
 
   ngOnInit(): void {
     this.questions$ = this.formService.getQuestions();
+    console.log(`this.questions$`, this.questions$);
     this.questions$.subscribe((questions) => {
       this.paragraphAnswers = new Array(questions.length).fill("");
       this.checkboxAnswers = new Array(questions.length).fill([]).map(() => []);
@@ -51,7 +55,7 @@ export class BuilderComponent {
   }
 
   reviewAnswers(): void {
-    const answers: any[] = [];
+    const answers: AnswerData[] = [];
     this.questions$.subscribe((questions) => {
       questions.forEach((question, index) => {
         if (question.answerType === "paragraph") {
@@ -59,6 +63,7 @@ export class BuilderComponent {
             type: "paragraph",
             question: question.question,
             paragraphAnswer: this.paragraphAnswers[index],
+            checkboxAnswer: [],
           });
         } else if (question.answerType === "checkbox") {
           const checkboxAnswers: string[] = [];
@@ -70,13 +75,13 @@ export class BuilderComponent {
           answers.push({
             type: "checkbox",
             question: question.question,
+            paragraphAnswer: "",
             checkboxAnswer: checkboxAnswers,
           });
         }
       });
     });
 
-    this.answersSignal.set(answers);
     this.formService.addAnswer(answers);
     this.router.navigate(["form/answers"]);
   }

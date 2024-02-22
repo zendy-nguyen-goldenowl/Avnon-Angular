@@ -7,7 +7,14 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatDialogRef } from "@angular/material/dialog";
-import { FormsModule } from "@angular/forms";
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FormService } from "src/app/services/form/form.service";
 import { ANSWER_TYPES } from "src/app/constants/answer-types.constant";
@@ -19,6 +26,7 @@ import { QuestionFormData } from "src/app/interfaces/question-form-data.interfac
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -30,6 +38,7 @@ import { QuestionFormData } from "src/app/interfaces/question-form-data.interfac
   styleUrls: ["./add-question.component.css"],
 })
 export class AddQuestionComponent {
+  form: FormGroup;
   answerTypes = ANSWER_TYPES;
 
   questionSignal = signal<string>("");
@@ -38,46 +47,69 @@ export class AddQuestionComponent {
   customAnswerSignal = signal<boolean>(false);
   requireSignal = signal<boolean>(false);
 
-  answerOptionsCountSignal = computed(() => this.answerOptionsSignal().length);
-
   constructor(
     private router: Router,
+    private formBuilder: FormBuilder,
     private formService: FormService,
     public dialogRef: MatDialogRef<AddQuestionComponent>
-  ) {}
+  ) {
+    this.form = this.formBuilder.group({
+      question: ["", Validators.required],
+      answerType: ["", Validators.required],
+      answerOptions: this.formBuilder.array([]),
+      customAnswer: [false],
+      require: [false],
+    });
 
-  updateAnswerOption(event: Event, index: number): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.answerOptionsSignal.update((options) => {
-      const updatedOptions = [...options];
-      updatedOptions[index] = value;
-      return updatedOptions;
+    this.form.valueChanges.subscribe((formValue) => {
+      this.questionSignal.set(formValue.question);
+      this.answerTypeSignal.set(formValue.answerType);
+      this.answerOptionsSignal.set(formValue.answerOptions);
+      this.customAnswerSignal.set(formValue.customAnswer);
+      this.requireSignal.set(formValue.require);
     });
   }
 
-  removeAnswerOption(index: number): void {
-    this.answerOptionsSignal.update((options) => [
-      ...options.slice(0, index),
-      ...options.slice(index + 1),
-    ]);
+  updateAnswerOption(event: Event, index: number): void {
+    const value = (event.target as HTMLInputElement).value;
+    const answerOptions = this.form.get("answerOptions") as FormArray;
+    answerOptions.at(index).setValue(value);
+  }
+
+  get answerOptions(): FormArray {
+    return this.form.get("answerOptions") as FormArray;
   }
 
   addAnswerOption(): void {
-    this.answerOptionsSignal.update((options) => [...options, ""]);
+    const answerOptions = this.form.get("answerOptions") as FormArray;
+    answerOptions.push(
+      this.formBuilder.group({
+        option: ["", Validators.required],
+      })
+    );
+  }
+
+  removeAnswerOption(index: number): void {
+    const answerOptions = this.form.get("answerOptions") as FormArray;
+    answerOptions.removeAt(index);
   }
 
   submitForm(): void {
-    const formData: QuestionFormData = {
-      question: this.questionSignal(),
-      answerType: this.answerTypeSignal(),
-      answerOptions: this.answerOptionsSignal().filter((item) => !!item),
-      customAnswer: this.customAnswerSignal(),
-      require: this.requireSignal(),
-    };
+    if (this.form.valid) {
+      const formData: QuestionFormData = {
+        question: this.form.value.question,
+        answerType: this.form.value.answerType,
+        answerOptions: this.form.value.answerOptions.map(
+          (option: { option: string }) => option.option
+        ),
+        customAnswer: this.form.value.customAnswer,
+        require: this.form.value.require,
+      };
 
-    this.formService.addQuestion(formData);
+      this.formService.addQuestion(formData);
 
-    this.router.navigate(["form/builder"]);
-    this.dialogRef.close();
+      this.router.navigate(["form/builder"]);
+      this.dialogRef.close();
+    }
   }
 }
